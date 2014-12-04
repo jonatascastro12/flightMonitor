@@ -59,10 +59,18 @@ WSGI_APPLICATION = 'flightMonitor.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	'default': {
+        	'ENGINE': 'django.db.backends.mysql', 
+	        'NAME': 'flight',
+	        'USER': 'flightmonitor',
+	        'PASSWORD': 'flightmonitor123',
+	        'HOST': 'flightdb.c7dngmifudsf.sa-east-1.rds.amazonaws.com',   # Or an IP Address that your DB is hosted on
+	        'PORT': '3306',
     }
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
 }
 
 # Internationalization
