@@ -16,10 +16,9 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
     def post(self, request, *args, **kwargs):
     	flight_s = FlightSerializer(data=request.data)
     	if (flight_s.is_valid()):
-    		flight = flight_s.save()
-    		if (flight.price < 500):
+    		if (flight_s.validated_data.get('price') < 400):
     			print "ENVIA E-MAIL DE ALERTA"
-    			send_mail("Alerta de preço de passagem: ".decode('utf8')+flight.destination, flight.searchUrl, 'sistema@passagens.com.br',['jonatascastro12@gmail.com'])    		
+    			send_mail("Alerta de preço de passagem: ".decode('utf8')+flight_s.validated_data.get('destination'),"PREÇO: ".decode('utf8') + str(flight_s.validated_data.get('price')) + "\n"+ flight_s.validated_data.get('searchUrl'), 'sistema@passagens.com.br',['jonatascastro12@gmail.com'])
 
         return self.create(request, *args, **kwargs)
 
