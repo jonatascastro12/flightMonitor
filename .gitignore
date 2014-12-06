@@ -1,0 +1,5 @@
+.idea
+**.pyc
+nohup.out
+flightMonitor/settings.py
+flightMonitor/_settings.py
