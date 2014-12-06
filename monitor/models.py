@@ -13,3 +13,4 @@ class Flight(models.Model):
 
 class FlightAdmin(admin.ModelAdmin):
 	list_display = ('departDate','returnDate','destination','price','timestamp')
+	list_filter = ['destination', 'departDate','timestamp']
