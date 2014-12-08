@@ -66,18 +66,16 @@ class FlightAdmin(admin.ModelAdmin):
 	list_filter = ['destination', 'departDate','timestamp']
 
 class BinaryWidget(forms.CheckboxSelectMultiple):
-	def render(self, name, value, attrs=None, choices=BitChoices(())):
+	def render(self, name, value, attrs=None, choices=()):
 		if value is None:
 	        	value = 0
+		choices = self.choices
 		final_attrs = self.build_attrs(attrs, name=name)
 		output = [format_html('<select multiple="multiple"{0}>', flatatt(final_attrs))]
 	
-		value = choices.get_selected_values(value)
-	
-		print("******")	
-		print(value)
-		
-		options = self.render_options(choices._choices, value)
+		value = WEEKDAY.get_selected_values(value)
+
+		options = self.render_options(choices, value)
 		if options:
 	        	output.append(options)
 		output.append('</select>')
