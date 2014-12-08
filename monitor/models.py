@@ -55,6 +55,7 @@ class Flight(models.Model):
 
 class FilterAlert(models.Model):
     destinationFilter = models.CharField(max_length=250, blank=True, null=True)
+    destinationExcept = models.CharField(max_length=500, blank=True, null=True)
     email = models.EmailField()
     maxPrice = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     dateStart = models.DateField(blank=True, null=True)

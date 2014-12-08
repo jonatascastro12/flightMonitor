@@ -31,6 +31,7 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
         filter_price = True
         filter_destination = True
         filter_weekday = True
+        filter_destination_except = True
         if (flight_s.is_valid()):
             for alert in alerts:
                 if flight_s.validated_data.get('price') <= alert.maxPrice:
@@ -44,14 +45,22 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
                     filter_destination = False
                     if flight_s.validated_data.get('destination') == alert.destinationFilter:
                         filter_destination = True
-                if alert.weekday and True:
+                if alert.weekday:
                     filter_weekday = False
                     days_of_week = [int(math.log(i, 2)) for i in WEEKDAY.get_selected_values(alert.weekday)]
 
                     if flight_s.validated_data.get('departDate').weekday() in days_of_week:
                         filter_weekday = True
+                if alert.destinationExcept:
+                    filter_destination_except = False
+                    if "," in alert.destinationExcept:
+                        destinations = alert.destinationExcept.split(",")
+                        if flight_s.validated_data.get('destination') not in destinations:
+                            filter_destination_except = True
+                    elif flight_s.validated_data.get('destination').strip() == alert.destinationExcept.strip():
+                        filter_destination_except = True
 
-                if filter_date and filter_price and filter_destination and filter_weekday:
+                if filter_date and filter_price and filter_destination and filter_weekday and filter_destination_except:
                     send_mail(
                         "Alerta de preço de passagem: ".decode('utf8') + flight_s.validated_data.get('destination'),
                         "PREÇO: ".decode('utf8') + str(
