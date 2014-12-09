@@ -27,40 +27,33 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         flight_s = FlightSerializer(data=request.data)
-        filter_date = True
-        filter_price = True
-        filter_destination = True
-        filter_weekday = True
-        filter_destination_except = True
+
         if (flight_s.is_valid()):
             for alert in alerts:
-                if flight_s.validated_data.get('price') <= alert.maxPrice:
-                    filter_price = True
+                filter_permit = True
+                if flight_s.validated_data.get('price') > alert.maxPrice:
+                    filter_permit = False
                 if alert.dateStart and alert.dateEnd:
-                    filter_date = False
-                    if flight_s.validated_data.get('departDate') >= alert.dateStart and flight_s.validated_data.get(
-                            'departDate') <= alert.dateEnd:
-                        filter_date = True
+                    if flight_s.validated_data.get('departDate') >= alert.dateStart or flight_s.validated_data.get(
+                            'departDate') > alert.dateEnd:
+                        filter_permit = False
                 if alert.destinationFilter:
-                    filter_destination = False
-                    if flight_s.validated_data.get('destination') == alert.destinationFilter:
-                        filter_destination = True
+                    if flight_s.validated_data.get('destination') != alert.destinationFilter:
+                        filter_permit = False
                 if alert.weekday:
-                    filter_weekday = False
                     days_of_week = [int(math.log(i, 2)) for i in WEEKDAY.get_selected_values(alert.weekday)]
-
-                    if flight_s.validated_data.get('departDate').weekday() in days_of_week:
-                        filter_weekday = True
+                    if flight_s.validated_data.get('departDate').weekday() not in days_of_week:
+                        filter_permit = False
                 if alert.destinationExcept:
-                    filter_destination_except = False
                     if "," in alert.destinationExcept:
-                        destinations = alert.destinationExcept.split(",")
-                        if flight_s.validated_data.get('destination') not in destinations:
-                            filter_destination_except = True
+                        excepts = alert.destinationExcept.split(",")
+                        if flight_s.validated_data.get('destination') in excepts:
+                            filter_permit = False
                     elif flight_s.validated_data.get('destination').strip() == alert.destinationExcept.strip():
-                        filter_destination_except = True
+                        filter_permit = False
 
-                if filter_date and filter_price and filter_destination and filter_weekday and filter_destination_except:
+                if filter_permit:
+                    print "EMAIL ENVIADO"
                     send_mail(
                         "Alerta de preço de passagem: ".decode('utf8') + flight_s.validated_data.get('destination'),
                         "PREÇO: ".decode('utf8') + str(
