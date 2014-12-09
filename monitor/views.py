@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 alerts = FilterAlert.objects.filter(active=True)
 
 
-def updateAlerts():
+def updateAlerts(r):
+    global alerts
     alerts = FilterAlert.objects.filter(active=True)
     return HttpResponse("OK")
 
@@ -38,7 +39,7 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
                             'departDate') > alert.dateEnd:
                         filter_permit = False
                 if alert.destinationFilter:
-                    if flight_s.validated_data.get('destination') != alert.destinationFilter:
+                    if flight_s.validated_data.get('destination').strip() != alert.destinationFilter.strip():
                         filter_permit = False
                 if alert.weekday:
                     days_of_week = [int(math.log(i, 2)) for i in WEEKDAY.get_selected_values(alert.weekday)]
