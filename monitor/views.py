@@ -48,6 +48,7 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
                 if alert.destinationExcept:
                     if "," in alert.destinationExcept:
                         excepts = alert.destinationExcept.split(",")
+                        excepts = [str(e).strip() for e in excepts]
                         if flight_s.validated_data.get('destination') in excepts:
                             filter_permit = False
                     elif flight_s.validated_data.get('destination').strip() == alert.destinationExcept.strip():
