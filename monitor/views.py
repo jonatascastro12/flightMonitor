@@ -57,12 +57,24 @@ class ExtentListCreateAPIView(generics.ListCreateAPIView):
                 if filter_permit:
                     print "EMAIL ENVIADO"
                     send_mail(
-                        "Alerta de preço de passagem: ".decode('utf8') + flight_s.validated_data.get('destination'),
-                        "PREÇO: ".decode('utf8') + str(
-                            flight_s.validated_data.get('price')) + "\n" + flight_s.validated_data.get('searchUrl') + "\n" +
-                            str(flight_s.validated_data.get('departDate')),
-                        'sistema@passagens.com.br', [alert.email])
-
+                        subject='Alerta: Passagem Rio X {0} - {1} - ida e volta por: R${2}'.format(flight_s.validated_data.get('destination'), flight_s.validated_data.get('departDate').strftime("%d/%m/%Y"), str(flight_s.validated_data.get('price'))),
+                        message='<strong>Passagem aérea</strong>\n<strong>Origem:</strong> {0}\n<strong>Destino:</strong> {1}\nData de partida: {2} - Data de retorno: {3}\nPreço: R${4}\n<a href="{5}">Ver no Submarino Viagens</a>'.format(
+                            flight_s.validated_data.get('origin'),
+                            flight_s.validated_data.get('destination'),
+                            flight_s.validated_data.get('departDate').strftime("%d/%m/%Y"),
+                            flight_s.validated_data.get('returnDate').strftime("%d/%m/%Y"),
+                            str(flight_s.validated_data.get('price')),
+                            flight_s.validated_data.get('searchUrl')
+                        ),
+                        html_message='<h1>Alerta de Passagem Aérea</h1><br /><strong>Origem:</strong> {0}<br /><strong>Destino:</strong> {1}<br />Data de partida: {2} - Data de retorno: {3}<br /><h2>Preço: R${4}</h2><br /><a href="{5}">Ver no Submarino Viagens</a>'.format(
+                            flight_s.validated_data.get('origin'),
+                            flight_s.validated_data.get('destination'),
+                            flight_s.validated_data.get('departDate').strftime("%d/%m/%Y"),
+                            flight_s.validated_data.get('returnDate').strftime("%d/%m/%Y"),
+                            str(flight_s.validated_data.get('price')),
+                            flight_s.validated_data.get('searchUrl')
+                        ),
+                        from_email='sistema@passagens.com.br', recipient_list=[alert.email])
             if flight_s.validated_data.get('price') < 2000:
                 return self.create(request, *args, **kwargs)
             return Response({"message": "Price higher than 2000.00"}, status=status.HTTP_202_ACCEPTED)
