@@ -10,3 +10,6 @@ The crawler itself can be found on this rep: https://github.com/jonatascastro12/
 `./activate`  
 `pip install -r requirements`  
 `python manage.py runserver`  
+
+
+**This project is no longer maintained.**
